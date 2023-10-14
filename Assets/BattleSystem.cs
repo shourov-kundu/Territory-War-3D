@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
 using System.Linq;
-
 using UnityEngine.UIElements;
+
 public enum BattleState {START, REDTURN, BLUETURN, REDWINS, BLUEWINS, DRAW}
 public enum Weapon {GRENADE, PISTOL}
 
