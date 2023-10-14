@@ -7,7 +7,6 @@ using UnityEngine.UIElements;
 
 public enum BattleState {START, REDTURN, BLUETURN, REDWINS, BLUEWINS, DRAW}
 public enum Weapon {GRENADE, PISTOL}
-
 public class BattleSystem : MonoBehaviour
 {
     [Range(2, 6)]
@@ -24,9 +23,12 @@ public class BattleSystem : MonoBehaviour
     public Vector3[] redSpawns;
     public Vector3[] blueSpawns;
     public GameObject weaponWheel;
-    public BattleState state;
+    [Header("Weapons")]
+    public GameObject grenade;
+    BattleState state;
     Coroutine turn = null;
     Coroutine weaponUse = null;
+    GameObject weaponObj;
     GameObject[] redPlayers;
     GameObject[] bluePlayers;
     GameObject currentPlayer;
@@ -36,7 +38,8 @@ public class BattleSystem : MonoBehaviour
     KeyCode[] inputKeys;
     ThirdPersonCamera tpc;
     CinemachineFreeLook cfl;
-    // Start is called before the first frame update
+    bool weaponFired;
+    
     void Start(){
         state = BattleState.START;
         currentPlayer = null;
@@ -98,6 +101,7 @@ public class BattleSystem : MonoBehaviour
         turn = StartCoroutine(takeTurn(redPlayers[r]));
     }
     IEnumerator takeTurn(GameObject player){
+        weaponFired = false;
         currentPlayer = player;
         LoadCameraToPlayer(currentPlayer);
         yield return new WaitForSeconds(1f);
@@ -106,32 +110,40 @@ public class BattleSystem : MonoBehaviour
         BattleState currentState = state;
         while (state == currentState){
             yield return new WaitUntil(keyPress);
-            switch (pressedKey){
-                case var v when v == passKey:
-                    StartCoroutine(TurnEnd()); // changes state to break out of loop
-                    break;
-                case var v when v == weaponsKey:
-                    yield return new WaitUntil(() => !Input.GetKey(weaponsKey));
+            if (pressedKey == passKey && currentPlayer.GetComponent<PlayerMovement>().enabled){
+                StartCoroutine(TurnEnd());
+                yield break;
+            } else if (pressedKey == weaponsKey && !weaponFired){
+                yield return new WaitUntil(() => !Input.GetKey(weaponsKey));
+                if (!weaponFired){
+                    if (weaponUse is not null)
+                        StopCoroutine(weaponUse);
                     bool active = weaponWheel.GetComponent<UIDocument>().rootVisualElement.style.display == DisplayStyle.Flex;
                     updateWeaponState(!active); // turn on/off weapon UI
                     currentPlayer.GetComponent<PlayerMovement>().enabled = active; // player movement
-                    break;
+                }
             }
         }
-    }    
-    public IEnumerator useWeapon(Weapon weapon){
+    }
+    public void selectWeapon(Weapon weapon){
         updateWeaponState(false);
+        weaponUse = StartCoroutine(useWeapon(weapon));
+    }
+    IEnumerator useWeapon(Weapon weapon){
         switch (weapon){
             case Weapon.GRENADE:
                 yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space));
                 Debug.Log("Powering Grenade");
+                // weaponObj = Instantiate(grenade, currentPlayer.transform.position + new Vector3(0f,2f,0f), playerCamera.transform.rotation);
                 yield return new WaitUntil(() => !Input.GetKey(KeyCode.Space));
+                weaponFired = true;
                 Debug.Log("Grenade thrown");
                 yield return new WaitForSeconds(2f);
                 StartCoroutine(TurnEnd());
                 break;
             case Weapon.PISTOL:
                 yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space));
+                weaponFired = true;
                 Debug.Log("Pistol fired");
                 yield return new WaitForSeconds(1f);
                 StartCoroutine(TurnEnd());
@@ -141,11 +153,7 @@ public class BattleSystem : MonoBehaviour
     void updateWeaponState(bool active){
         weaponWheel.GetComponent<UIDocument>().rootVisualElement.style.display = active ?  DisplayStyle.Flex : DisplayStyle.None;
         UnityEngine.Cursor.visible = active;
-        if (active){
-            UnityEngine.Cursor.lockState = CursorLockMode.Confined;
-        } else{
-            UnityEngine.Cursor.lockState = CursorLockMode.Locked;
-        }
+        UnityEngine.Cursor.lockState = active ? CursorLockMode.Confined : CursorLockMode.Locked;
         tpc.enabled = !active;
         cfl.enabled = !active;
     }

@@ -10,7 +10,7 @@ public class UI : MonoBehaviour
         Button grenadeButton = root.Q<Button>("Grenade");
         Button pistolButton = root.Q<Button>("Pistol");
 
-        grenadeButton.clicked += () => StartCoroutine(battleSystem.useWeapon(Weapon.GRENADE));
-        pistolButton.clicked += () => StartCoroutine(battleSystem.useWeapon(Weapon.PISTOL));
+        grenadeButton.clicked += () => battleSystem.selectWeapon(Weapon.GRENADE);
+        pistolButton.clicked += () => battleSystem.selectWeapon(Weapon.PISTOL);
     }
 }
