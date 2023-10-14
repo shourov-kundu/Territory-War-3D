@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
 using System.Linq;
+
 using UnityEngine.UIElements;
-
-
 public enum BattleState {START, REDTURN, BLUETURN, REDWINS, BLUEWINS, DRAW}
 public enum Weapon {GRENADE, PISTOL}
 
@@ -73,7 +72,6 @@ public class BattleSystem : MonoBehaviour
         } else{
             RedTurn();
         }
-
     }
     IEnumerator SetupBattle(){
         Quaternion redDirection = Quaternion.Euler(0, 0, 0);
@@ -120,8 +118,7 @@ public class BattleSystem : MonoBehaviour
                     break;
             }
         }
-    }
-
+    }    
     public IEnumerator useWeapon(Weapon weapon){
         updateWeaponState(false);
         switch (weapon){

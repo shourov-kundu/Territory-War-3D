@@ -23,17 +23,14 @@ public class PlayerMovement : MonoBehaviour
     [Header("Keybinds")]
     public KeyCode jumpKey = KeyCode.Space;
 
-    // Start is called before the first frame update
     void Start(){
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
         ResetJump();
     }
-
     private void MyInput(){        
         horizontal = Input.GetAxisRaw("Horizontal");
         vertical = Input.GetAxisRaw("Vertical");
-
         if (Input.GetKey(jumpKey) && readyToJump && IsGrounded()){
             readyToJump = false;
             Jump();
@@ -47,9 +44,7 @@ public class PlayerMovement : MonoBehaviour
             forceVector *= airMultiplier;
         }
         rb.AddForce(forceVector, ForceMode.VelocityChange);
-
     }
-    // Update is called once per frame
     void Update(){
         MyInput();
         SpeedControl();
@@ -57,14 +52,12 @@ public class PlayerMovement : MonoBehaviour
             rb.drag = groundDrag;
         else
             rb.drag = 0;
-
     }
     void FixedUpdate(){
         MovePlayer();   
     }
     private void SpeedControl(){
         Vector3 flatVel = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
-
         if (flatVel.magnitude > moveSpeed) {
             Vector3 limitedVel = flatVel.normalized * moveSpeed;
             rb.velocity = new Vector3(limitedVel.x, rb.velocity.y, limitedVel.z);

@@ -4,11 +4,6 @@ using UnityEngine;
 
 public class ThirdPersonCamera : MonoBehaviour
 {
-    // public CharacterController controller;
-    // public float speed = 6f;
-    // public float turnSmoothTime = 0.1f;
-    // float turnSmoothVelocity;
-
     public Transform orientation;
     public Transform player;
     public Transform playerObj;
@@ -19,8 +14,6 @@ public class ThirdPersonCamera : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
-
-    // Update is called once per frame
     void Update(){
         Vector3 viewDir = player.position - new Vector3(transform.position.x, player.position.y, transform.position.z);
         orientation.forward = viewDir.normalized;
