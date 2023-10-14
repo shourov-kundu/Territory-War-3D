@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
 using System.Linq;
+using UnityEngine.UIElements;
+
 
 public enum BattleState {START, REDTURN, BLUETURN, REDWINS, BLUEWINS, DRAW}
 public enum Weapon {GRENADE, PISTOL}
@@ -25,7 +27,7 @@ public class BattleSystem : MonoBehaviour
     public GameObject weaponWheel;
     public BattleState state;
     Coroutine turn = null;
-
+    Coroutine weaponUse = null;
     GameObject[] redPlayers;
     GameObject[] bluePlayers;
     GameObject currentPlayer;
@@ -44,6 +46,7 @@ public class BattleSystem : MonoBehaviour
         inputKeys = new KeyCode[] {passKey, weaponsKey};
         tpc = playerCamera.GetComponent<ThirdPersonCamera>();
         cfl = playerCamera.GetComponent<CinemachineFreeLook>();
+        weaponWheel.GetComponent<UIDocument>().rootVisualElement.style.display = DisplayStyle.None;
         StartCoroutine(SetupBattle());
     }
     void Update(){
@@ -82,8 +85,8 @@ public class BattleSystem : MonoBehaviour
             bluePlayers[i].name = "Player " + (i+1);
         }
         yield return new WaitForSeconds(1f);
-        // playerCamera.SetActive(true);
-        // mapCamera.SetActive(false);
+        playerCamera.SetActive(true);
+        mapCamera.SetActive(false);
         RedTurn();
     }
     void RedTurn(){
@@ -97,8 +100,6 @@ public class BattleSystem : MonoBehaviour
         turn = StartCoroutine(takeTurn(redPlayers[r]));
     }
     IEnumerator takeTurn(GameObject player){
-        playerCamera.SetActive(true);
-        mapCamera.SetActive(false);
         currentPlayer = player;
         LoadCameraToPlayer(currentPlayer);
         yield return new WaitForSeconds(1f);
@@ -109,27 +110,44 @@ public class BattleSystem : MonoBehaviour
             yield return new WaitUntil(keyPress);
             switch (pressedKey){
                 case var v when v == passKey:
-                    StartCoroutine(TurnEnd());
+                    StartCoroutine(TurnEnd()); // changes state to break out of loop
                     break;
                 case var v when v == weaponsKey:
                     yield return new WaitUntil(() => !Input.GetKey(weaponsKey));
-                    updateWeaponState(!weaponWheel.activeSelf);
-                    currentPlayer.GetComponent<PlayerMovement>().enabled = !weaponWheel.activeSelf;
+                    bool active = weaponWheel.GetComponent<UIDocument>().rootVisualElement.style.display == DisplayStyle.Flex;
+                    updateWeaponState(!active); // turn on/off weapon UI
+                    currentPlayer.GetComponent<PlayerMovement>().enabled = active; // player movement
                     break;
             }
         }
     }
 
-    public void useWeapon(Weapon weapon){
+    public IEnumerator useWeapon(Weapon weapon){
         updateWeaponState(false);
+        switch (weapon){
+            case Weapon.GRENADE:
+                yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space));
+                Debug.Log("Powering Grenade");
+                yield return new WaitUntil(() => !Input.GetKey(KeyCode.Space));
+                Debug.Log("Grenade thrown");
+                yield return new WaitForSeconds(2f);
+                StartCoroutine(TurnEnd());
+                break;
+            case Weapon.PISTOL:
+                yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space));
+                Debug.Log("Pistol fired");
+                yield return new WaitForSeconds(1f);
+                StartCoroutine(TurnEnd());
+                break;
+        }
     }
     void updateWeaponState(bool active){
-        weaponWheel.SetActive(active);
-        Cursor.visible = active;
+        weaponWheel.GetComponent<UIDocument>().rootVisualElement.style.display = active ?  DisplayStyle.Flex : DisplayStyle.None;
+        UnityEngine.Cursor.visible = active;
         if (active){
-            Cursor.lockState = CursorLockMode.Confined;
+            UnityEngine.Cursor.lockState = CursorLockMode.Confined;
         } else{
-            Cursor.lockState = CursorLockMode.Locked;
+            UnityEngine.Cursor.lockState = CursorLockMode.Locked;
         }
         tpc.enabled = !active;
         cfl.enabled = !active;

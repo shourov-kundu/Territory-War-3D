@@ -4,13 +4,13 @@ using UnityEngine.UIElements;
 public class UI : MonoBehaviour
 {
     public BattleSystem battleSystem;
-    void OnEnable(){
+    void Start(){
         VisualElement root = GetComponent<UIDocument>().rootVisualElement;
         
         Button grenadeButton = root.Q<Button>("Grenade");
         Button pistolButton = root.Q<Button>("Pistol");
 
-        grenadeButton.clicked += () => battleSystem.useWeapon(Weapon.GRENADE);
-        pistolButton.clicked += () => battleSystem.useWeapon(Weapon.PISTOL);
+        grenadeButton.clicked += () => StartCoroutine(battleSystem.useWeapon(Weapon.GRENADE));
+        pistolButton.clicked += () => StartCoroutine(battleSystem.useWeapon(Weapon.PISTOL));
     }
 }
