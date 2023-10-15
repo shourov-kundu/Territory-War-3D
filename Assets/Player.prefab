@@ -100,7 +100,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHP: 11
   currentHP: 10
-  alive: 1
 --- !u!1 &4523415105439599411
 GameObject:
   m_ObjectHideFlags: 0

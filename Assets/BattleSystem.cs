@@ -39,6 +39,7 @@ public class BattleSystem : MonoBehaviour
     ThirdPersonCamera tpc;
     CinemachineFreeLook cfl;
     bool weaponFired;
+    GameObject mc;
     
     void Start(){
         state = BattleState.START;
@@ -48,6 +49,7 @@ public class BattleSystem : MonoBehaviour
         inputKeys = new KeyCode[] {passKey, weaponsKey};
         tpc = playerCamera.GetComponent<ThirdPersonCamera>();
         cfl = playerCamera.GetComponent<CinemachineFreeLook>();
+        mc = GameObject.FindWithTag("MainCamera");
         weaponWheel.GetComponent<UIDocument>().rootVisualElement.style.display = DisplayStyle.None;
         StartCoroutine(SetupBattle());
     }
@@ -59,6 +61,10 @@ public class BattleSystem : MonoBehaviour
     IEnumerator TurnEnd(){
         StopCoroutine(turn);
         turn = null;
+        if (weaponObj is not null){
+            Destroy(weaponObj);
+            weaponObj = null;
+        }
         updateWeaponState(false);
         currentPlayer.GetComponent<PlayerMovement>().enabled = false;
         yield return new WaitForSeconds(2f);
@@ -116,8 +122,10 @@ public class BattleSystem : MonoBehaviour
             } else if (pressedKey == weaponsKey && !weaponFired){
                 yield return new WaitUntil(() => !Input.GetKey(weaponsKey));
                 if (!weaponFired){
-                    if (weaponUse is not null)
+                    if (weaponUse is not null){
                         StopCoroutine(weaponUse);
+                        weaponUse = null;
+                    }
                     bool active = weaponWheel.GetComponent<UIDocument>().rootVisualElement.style.display == DisplayStyle.Flex;
                     updateWeaponState(!active); // turn on/off weapon UI
                     currentPlayer.GetComponent<PlayerMovement>().enabled = active; // player movement
@@ -134,9 +142,12 @@ public class BattleSystem : MonoBehaviour
             case Weapon.GRENADE:
                 yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space));
                 Debug.Log("Powering Grenade");
-                // weaponObj = Instantiate(grenade, currentPlayer.transform.position + new Vector3(0f,2f,0f), playerCamera.transform.rotation);
+                weaponObj = Instantiate(grenade, currentPlayer.transform.position + new Vector3(0f,2f,0f), playerCamera.transform.rotation);
                 yield return new WaitUntil(() => !Input.GetKey(KeyCode.Space));
                 weaponFired = true;
+                weaponObj.GetComponent<Rigidbody>().isKinematic = false;
+                weaponObj.GetComponent<Rigidbody>().AddForce(mc.transform.forward * 15f, ForceMode.VelocityChange);
+                weaponObj.GetComponent<Grenade>().Activate();
                 Debug.Log("Grenade thrown");
                 yield return new WaitForSeconds(2f);
                 StartCoroutine(TurnEnd());
