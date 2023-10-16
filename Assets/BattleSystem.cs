@@ -125,6 +125,7 @@ public class BattleSystem : MonoBehaviour
                     if (weaponUse is not null){
                         StopCoroutine(weaponUse);
                         weaponUse = null;
+                        Destroy(weaponObj);
                     }
                     bool active = weaponWheel.GetComponent<UIDocument>().rootVisualElement.style.display == DisplayStyle.Flex;
                     updateWeaponState(!active); // turn on/off weapon UI
