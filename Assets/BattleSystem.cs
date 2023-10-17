@@ -40,7 +40,7 @@ public class BattleSystem : MonoBehaviour
     CinemachineFreeLook cfl;
     bool weaponFired;
     GameObject mc;
-    
+    LineRenderer lr;
     void Start(){
         state = BattleState.START;
         currentPlayer = null;
@@ -50,6 +50,8 @@ public class BattleSystem : MonoBehaviour
         tpc = playerCamera.GetComponent<ThirdPersonCamera>();
         cfl = playerCamera.GetComponent<CinemachineFreeLook>();
         mc = GameObject.FindWithTag("MainCamera");
+        lr = GetComponent<LineRenderer>();
+        lr.enabled = false;
         weaponWheel.GetComponent<UIDocument>().rootVisualElement.style.display = DisplayStyle.None;
         StartCoroutine(SetupBattle());
     }
@@ -141,6 +143,8 @@ public class BattleSystem : MonoBehaviour
     IEnumerator useWeapon(Weapon weapon){
         switch (weapon){
             case Weapon.GRENADE:
+                lr.enabled = true;
+                lr.SetPositions(new Vector3[2] {currentPlayer.transform.position, currentPlayer.transform.position + currentPlayer.transform.forward});
                 yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space));
                 Debug.Log("Powering Grenade");
                 weaponObj = Instantiate(grenade, currentPlayer.transform.position + new Vector3(0f,2f,0f), playerCamera.transform.rotation);
