@@ -166,9 +166,9 @@ public class BattleSystem : MonoBehaviour
                     if (Input.GetKeyDown(KeyCode.Space))
                         break;
                     if (Input.GetKey(KeyCode.T) && !Input.GetKey(KeyCode.R))
-                        angle = Mathf.Min(angle + 5*Time.deltaTime, .95f);
+                        angle = Mathf.Min(angle + 3*Time.deltaTime, .95f);
                     if (Input.GetKey(KeyCode.R) && !Input.GetKey(KeyCode.T))
-                        angle = Mathf.Max(angle - 5*Time.deltaTime, -.95f);
+                        angle = Mathf.Max(angle - 3*Time.deltaTime, -.95f);
                     float x = lineLength*Mathf.Cos(angle)*Vector3.Dot(currentPlayer.transform.forward, Vector3.right);
                     float y = lineLength*Mathf.Sin(angle);
                     float z = lineLength*Mathf.Cos(angle)*Vector3.Dot(currentPlayer.transform.forward, Vector3.forward);
