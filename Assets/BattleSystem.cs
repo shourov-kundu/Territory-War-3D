@@ -24,6 +24,7 @@ public class BattleSystem : MonoBehaviour
     public Vector3[] redSpawns;
     public Vector3[] blueSpawns;
     public GameObject weaponWheel;
+    public GameObject powerMeter;
     [Header("Weapons")]
     public GameObject grenade;
     BattleState state;
@@ -42,10 +43,12 @@ public class BattleSystem : MonoBehaviour
     bool weaponFired;
     GameObject mc;
     LineRenderer lr;
-    bool increasingAngle;
-    bool decreasingAngle;
     float angle;
     float lineLength = 1.7f;
+    float powerSpeed = .5f;
+    float minPower = 20f;
+    float maxPower = 70f;
+    ProgressBar powerBar;
     void Start(){
         state = BattleState.START;
         currentPlayer = null;
@@ -59,6 +62,9 @@ public class BattleSystem : MonoBehaviour
         lr.enabled = false;
         angle = 0f;
         weaponWheel.GetComponent<UIDocument>().rootVisualElement.style.display = DisplayStyle.None;
+        powerMeter.GetComponent<UIDocument>().rootVisualElement.style.display = DisplayStyle.Flex;
+        powerBar = (ProgressBar)powerMeter.GetComponent<UIDocument>().rootVisualElement.Q("PowerMeter");
+        powerBar.style.display = DisplayStyle.None;
         StartCoroutine(SetupBattle());
     }
     void Update(){
@@ -136,6 +142,7 @@ public class BattleSystem : MonoBehaviour
                         Destroy(weaponObj);
                     }
                     lr.enabled = false;
+                    powerBar.style.display = DisplayStyle.None;
                     bool active = weaponWheel.GetComponent<UIDocument>().rootVisualElement.style.display == DisplayStyle.Flex;
                     updateWeaponState(!active); // turn on/off weapon UI
                     currentPlayer.GetComponent<PlayerMovement>().enabled = active; // player movement
@@ -162,22 +169,38 @@ public class BattleSystem : MonoBehaviour
                         angle = Mathf.Min(angle + 5*Time.deltaTime, .95f);
                     if (Input.GetKey(KeyCode.R) && !Input.GetKey(KeyCode.T))
                         angle = Mathf.Max(angle - 5*Time.deltaTime, -.95f);
-                    float x = currentPlayer.transform.position.x + lineLength*Mathf.Cos(angle)*Vector3.Dot(currentPlayer.transform.forward, Vector3.right);
-                    float y = currentPlayer.transform.position.y + lineLength*Mathf.Sin(angle);
-                    float z = currentPlayer.transform.position.z + lineLength*Mathf.Cos(angle)*Vector3.Dot(currentPlayer.transform.forward, Vector3.forward);
-                    lr.SetPosition(1, new Vector3(x,y,z));
+                    float x = lineLength*Mathf.Cos(angle)*Vector3.Dot(currentPlayer.transform.forward, Vector3.right);
+                    float y = lineLength*Mathf.Sin(angle);
+                    float z = lineLength*Mathf.Cos(angle)*Vector3.Dot(currentPlayer.transform.forward, Vector3.forward);
+                    lr.SetPosition(1, currentPlayer.transform.position + new Vector3(x,y,z));
                     f = currentPlayer.transform.forward;
                 }
-                Debug.Log("Powering Grenade");
+                powerBar.style.display = DisplayStyle.Flex;
                 weaponObj = Instantiate(grenade, currentPlayer.transform.position + new Vector3(0f,2f,0f), playerCamera.transform.rotation);
+                bool increasing = true;                
+                powerBar.value = powerBar.lowValue;
+                float speed = (powerBar.highValue - powerBar.lowValue)*powerSpeed;
+                while (Input.GetKey(KeyCode.Space)){
+                    yield return new WaitUntil(() => Input.GetKey(KeyCode.Space));
+                    if (increasing){
+                        powerBar.value = Mathf.Min(powerBar.value + speed*Time.deltaTime, powerBar.highValue);
+                        if (powerBar.value == powerBar.highValue)
+                            increasing = false;
+                    } else {
+                        powerBar.value = Mathf.Max(powerBar.value - speed*Time.deltaTime, powerBar.lowValue);
+                        if (powerBar.value == powerBar.lowValue)
+                            increasing = true;
+                    }
+                }
                 yield return new WaitUntil(() => !Input.GetKey(KeyCode.Space));
                 weaponFired = true;
                 lr.enabled = false;
                 weaponObj.GetComponent<Rigidbody>().isKinematic = false;
-                Vector3 throwDirection = lr.GetPosition(1) - lr.GetPosition(0);
-                weaponObj.GetComponent<Rigidbody>().AddForce(throwDirection * 15f, ForceMode.VelocityChange);
+                Vector3 throwDirection = (lr.GetPosition(1) - lr.GetPosition(0)).normalized;
+                float power = minPower + (maxPower - minPower)*powerBar.value/100f;
+                weaponObj.GetComponent<Rigidbody>().AddForce(throwDirection * power, ForceMode.VelocityChange);
                 weaponObj.GetComponent<Grenade>().Activate();
-                Debug.Log("Grenade thrown");
+                powerBar.style.display = DisplayStyle.None;
                 yield return new WaitForSeconds(2f);
                 StartCoroutine(TurnEnd());
                 break;

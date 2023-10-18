@@ -48,7 +48,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 065657a158e603b41b852e26bd17015c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 2
+  moveSpeed: 3
   orientation: {fileID: 7288851192984241581}
   playerHeight: 2
   whatIsGround:
