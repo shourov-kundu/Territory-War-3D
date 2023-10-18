@@ -4,6 +4,7 @@ using UnityEngine;
 using Cinemachine;
 using System.Linq;
 using UnityEngine.UIElements;
+using System;
 
 public enum BattleState {START, REDTURN, BLUETURN, REDWINS, BLUEWINS, DRAW}
 public enum Weapon {GRENADE, PISTOL}
@@ -41,6 +42,10 @@ public class BattleSystem : MonoBehaviour
     bool weaponFired;
     GameObject mc;
     LineRenderer lr;
+    bool increasingAngle;
+    bool decreasingAngle;
+    float angle;
+    float lineLength = 1.7f;
     void Start(){
         state = BattleState.START;
         currentPlayer = null;
@@ -52,6 +57,7 @@ public class BattleSystem : MonoBehaviour
         mc = GameObject.FindWithTag("MainCamera");
         lr = GetComponent<LineRenderer>();
         lr.enabled = false;
+        angle = 0f;
         weaponWheel.GetComponent<UIDocument>().rootVisualElement.style.display = DisplayStyle.None;
         StartCoroutine(SetupBattle());
     }
@@ -122,13 +128,14 @@ public class BattleSystem : MonoBehaviour
                 StartCoroutine(TurnEnd());
                 yield break;
             } else if (pressedKey == weaponsKey && !weaponFired){
-                yield return new WaitUntil(() => !Input.GetKey(weaponsKey));
+                yield return new WaitUntil(() => !Input.GetKey(weaponsKey) && currentPlayer.GetComponent<PlayerMovement>().IsGrounded());
                 if (!weaponFired){
                     if (weaponUse is not null){
                         StopCoroutine(weaponUse);
                         weaponUse = null;
                         Destroy(weaponObj);
                     }
+                    lr.enabled = false;
                     bool active = weaponWheel.GetComponent<UIDocument>().rootVisualElement.style.display == DisplayStyle.Flex;
                     updateWeaponState(!active); // turn on/off weapon UI
                     currentPlayer.GetComponent<PlayerMovement>().enabled = active; // player movement
@@ -145,13 +152,30 @@ public class BattleSystem : MonoBehaviour
             case Weapon.GRENADE:
                 lr.enabled = true;
                 lr.SetPositions(new Vector3[2] {currentPlayer.transform.position, currentPlayer.transform.position + currentPlayer.transform.forward});
-                yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space));
+                angle = 0;
+                Vector3 f = currentPlayer.transform.forward;
+                while (true){
+                    yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space) || Input.GetKey(KeyCode.T) || Input.GetKey(KeyCode.R) || f != currentPlayer.transform.forward);
+                    if (Input.GetKeyDown(KeyCode.Space))
+                        break;
+                    if (Input.GetKey(KeyCode.T) && !Input.GetKey(KeyCode.R))
+                        angle = Mathf.Min(angle + 5*Time.deltaTime, .95f);
+                    if (Input.GetKey(KeyCode.R) && !Input.GetKey(KeyCode.T))
+                        angle = Mathf.Max(angle - 5*Time.deltaTime, -.95f);
+                    float x = currentPlayer.transform.position.x + lineLength*Mathf.Cos(angle)*Vector3.Dot(currentPlayer.transform.forward, Vector3.right);
+                    float y = currentPlayer.transform.position.y + lineLength*Mathf.Sin(angle);
+                    float z = currentPlayer.transform.position.z + lineLength*Mathf.Cos(angle)*Vector3.Dot(currentPlayer.transform.forward, Vector3.forward);
+                    lr.SetPosition(1, new Vector3(x,y,z));
+                    f = currentPlayer.transform.forward;
+                }
                 Debug.Log("Powering Grenade");
                 weaponObj = Instantiate(grenade, currentPlayer.transform.position + new Vector3(0f,2f,0f), playerCamera.transform.rotation);
                 yield return new WaitUntil(() => !Input.GetKey(KeyCode.Space));
                 weaponFired = true;
+                lr.enabled = false;
                 weaponObj.GetComponent<Rigidbody>().isKinematic = false;
-                weaponObj.GetComponent<Rigidbody>().AddForce(mc.transform.forward * 15f, ForceMode.VelocityChange);
+                Vector3 throwDirection = lr.GetPosition(1) - lr.GetPosition(0);
+                weaponObj.GetComponent<Rigidbody>().AddForce(throwDirection * 15f, ForceMode.VelocityChange);
                 weaponObj.GetComponent<Grenade>().Activate();
                 Debug.Log("Grenade thrown");
                 yield return new WaitForSeconds(2f);
