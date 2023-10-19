@@ -3898,7 +3898,7 @@ MonoBehaviour:
   - {x: 21, y: 2, z: 120}
   weaponWheel: {fileID: 763255934}
   powerMeter: {fileID: 240444219}
-  grenade: {fileID: 4703135041189142503, guid: 173ee7954161fc74b9803bbe8ceac774, type: 3}
+  grenade: {fileID: 5681395811556615749, guid: 8f1ed420e47bfe24695e0a86e29bdbf8, type: 3}
 --- !u!4 &323268912
 Transform:
   m_ObjectHideFlags: 0

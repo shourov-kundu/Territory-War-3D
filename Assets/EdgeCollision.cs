@@ -7,8 +7,8 @@ public class EdgeCollision : MonoBehaviour
     void OnTriggerEnter(Collider collider){     
         if (collider.gameObject.tag == "Player"){
             StartCoroutine(KillPlayer(collider.transform.parent.gameObject));
-        } else if (collider.gameObject.tag == "Weapon"){
-            Destroy(collider.gameObject);
+        } else if (collider.gameObject.TryGetComponent<IRemovable>(out IRemovable item)){
+                item.Remove();
         }
     }
     IEnumerator KillPlayer(GameObject player){

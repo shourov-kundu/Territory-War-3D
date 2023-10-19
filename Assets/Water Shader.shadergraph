@@ -23,6 +23,9 @@
         },
         {
             "m_Id": "09b5de3f59db4cdd9ab4301dbf5ade6f"
+        },
+        {
+            "m_Id": "ee76889ef5cb4737b43945472292f6ed"
         }
     ],
     "m_Keywords": [],
@@ -131,6 +134,9 @@
         },
         {
             "m_Id": "2f88dc241b4441a1bfdeafa073e68bdd"
+        },
+        {
+            "m_Id": "b46d7fb3c2804b74bfa936a09983d1b9"
         }
     ],
     "m_GroupDatas": [],
@@ -344,6 +350,20 @@
                     "m_Id": "1d24053093a6448d97dd5d5d198589da"
                 },
                 "m_SlotId": 0
+            }
+        },
+        {
+            "m_OutputSlot": {
+                "m_Node": {
+                    "m_Id": "b46d7fb3c2804b74bfa936a09983d1b9"
+                },
+                "m_SlotId": 0
+            },
+            "m_InputSlot": {
+                "m_Node": {
+                    "m_Id": "b6c2f415fcc1434b85cc7a0ceaab83fb"
+                },
+                "m_SlotId": 1
             }
         },
         {
@@ -2392,6 +2412,21 @@
 
 {
     "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
+    "m_ObjectId": "8e8301d1ee7940339bff4b543e0102b2",
+    "m_Id": 0,
+    "m_DisplayName": "WaveHeight",
+    "m_SlotType": 1,
+    "m_Hidden": false,
+    "m_ShaderOutputName": "Out",
+    "m_StageCapability": 3,
+    "m_Value": 0.0,
+    "m_DefaultValue": 0.0,
+    "m_Labels": []
+}
+
+{
+    "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.DynamicValueMaterialSlot",
     "m_ObjectId": "8f2b43b0e471476c8601936e2ad7d227",
     "m_Id": 0,
@@ -2765,6 +2800,42 @@
         "m_SerializableColors": []
     },
     "m_SerializedDescriptor": "VertexDescription.Tangent"
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.PropertyNode",
+    "m_ObjectId": "b46d7fb3c2804b74bfa936a09983d1b9",
+    "m_Group": {
+        "m_Id": ""
+    },
+    "m_Name": "Property",
+    "m_DrawState": {
+        "m_Expanded": true,
+        "m_Position": {
+            "serializedVersion": "2",
+            "x": -442.9999694824219,
+            "y": -663.9999389648438,
+            "width": 139.00003051757813,
+            "height": 34.0
+        }
+    },
+    "m_Slots": [
+        {
+            "m_Id": "8e8301d1ee7940339bff4b543e0102b2"
+        }
+    ],
+    "synonyms": [],
+    "m_Precision": 0,
+    "m_PreviewExpanded": true,
+    "m_DismissedVersion": 0,
+    "m_PreviewMode": 0,
+    "m_CustomColors": {
+        "m_SerializableColors": []
+    },
+    "m_Property": {
+        "m_Id": "ee76889ef5cb4737b43945472292f6ed"
+    }
 }
 
 {
@@ -3256,6 +3327,9 @@
         },
         {
             "m_Id": "09b5de3f59db4cdd9ab4301dbf5ade6f"
+        },
+        {
+            "m_Id": "ee76889ef5cb4737b43945472292f6ed"
         }
     ]
 }
@@ -3772,6 +3846,34 @@
     },
     "m_Property": {
         "m_Id": "7d5ad4c0352041bb8f40e5804daeec42"
+    }
+}
+
+{
+    "m_SGVersion": 1,
+    "m_Type": "UnityEditor.ShaderGraph.Internal.Vector1ShaderProperty",
+    "m_ObjectId": "ee76889ef5cb4737b43945472292f6ed",
+    "m_Guid": {
+        "m_GuidSerialized": "4d4644f7-eefc-479d-bdce-3ab637465055"
+    },
+    "m_Name": "WaveHeight",
+    "m_DefaultRefNameVersion": 1,
+    "m_RefNameGeneratedByDisplayName": "WaveHeight",
+    "m_DefaultReferenceName": "_WaveHeight",
+    "m_OverrideReferenceName": "",
+    "m_GeneratePropertyBlock": true,
+    "m_UseCustomSlotLabel": false,
+    "m_CustomSlotLabel": "",
+    "m_DismissedVersion": 0,
+    "m_Precision": 0,
+    "overrideHLSLDeclaration": false,
+    "hlslDeclarationOverride": 0,
+    "m_Hidden": false,
+    "m_Value": 2.0,
+    "m_FloatType": 0,
+    "m_RangeValues": {
+        "x": 0.0,
+        "y": 1.0
     }
 }
 

@@ -46,8 +46,8 @@ public class BattleSystem : MonoBehaviour
     float angle;
     float lineLength = 1.7f;
     float powerSpeed = .5f;
-    float minPower = 20f;
-    float maxPower = 70f;
+    float minPower = 5f;
+    float maxPower = 35f;
     ProgressBar powerBar;
     void Start(){
         state = BattleState.START;
@@ -158,7 +158,7 @@ public class BattleSystem : MonoBehaviour
         switch (weapon){
             case Weapon.GRENADE:
                 lr.enabled = true;
-                lr.SetPositions(new Vector3[2] {currentPlayer.transform.position, currentPlayer.transform.position + currentPlayer.transform.forward});
+                lr.SetPositions(new Vector3[2] {currentPlayer.transform.position, currentPlayer.transform.position + lineLength*currentPlayer.transform.forward});
                 angle = 0;
                 Vector3 f = currentPlayer.transform.forward;
                 while (true){
@@ -169,10 +169,10 @@ public class BattleSystem : MonoBehaviour
                         angle = Mathf.Min(angle + 3*Time.deltaTime, .95f);
                     if (Input.GetKey(KeyCode.R) && !Input.GetKey(KeyCode.T))
                         angle = Mathf.Max(angle - 3*Time.deltaTime, -.95f);
-                    float x = lineLength*Mathf.Cos(angle)*Vector3.Dot(currentPlayer.transform.forward, Vector3.right);
-                    float y = lineLength*Mathf.Sin(angle);
-                    float z = lineLength*Mathf.Cos(angle)*Vector3.Dot(currentPlayer.transform.forward, Vector3.forward);
-                    lr.SetPosition(1, currentPlayer.transform.position + new Vector3(x,y,z));
+                    float x = Mathf.Cos(angle)*Vector3.Dot(currentPlayer.transform.forward, Vector3.right);
+                    float y = Mathf.Sin(angle);
+                    float z = Mathf.Cos(angle)*Vector3.Dot(currentPlayer.transform.forward, Vector3.forward);
+                    lr.SetPosition(1, currentPlayer.transform.position + lineLength*new Vector3(x,y,z));
                     f = currentPlayer.transform.forward;
                 }
                 powerBar.style.display = DisplayStyle.Flex;
@@ -197,11 +197,11 @@ public class BattleSystem : MonoBehaviour
                 lr.enabled = false;
                 weaponObj.GetComponent<Rigidbody>().isKinematic = false;
                 Vector3 throwDirection = (lr.GetPosition(1) - lr.GetPosition(0)).normalized;
-                float power = minPower + (maxPower - minPower)*powerBar.value/100f;
+                float power = minPower + (maxPower - minPower)*powerBar.value/powerBar.highValue;
                 weaponObj.GetComponent<Rigidbody>().AddForce(throwDirection * power, ForceMode.VelocityChange);
                 weaponObj.GetComponent<Grenade>().Activate();
                 powerBar.style.display = DisplayStyle.None;
-                yield return new WaitForSeconds(2f);
+                yield return new WaitUntil(() => weaponObj.GetComponent<Grenade>().IsRemoved());
                 StartCoroutine(TurnEnd());
                 break;
             case Weapon.PISTOL:
