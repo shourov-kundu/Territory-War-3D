@@ -102,8 +102,8 @@ public class BattleSystem : MonoBehaviour
         for (int i = 0; i < playerCount; i++){
             redPlayers[i] = Instantiate(redPlayer, redSpawns[i], redDirection, redTeam.transform);
             bluePlayers[i] = Instantiate(bluePlayer, blueSpawns[i], blueDirection, blueTeam.transform);
-            redPlayers[i].name = "Player " + (i+1);
-            bluePlayers[i].name = "Player " + (i+1);
+            redPlayers[i].GetComponent<Unit>().SetName("Player " + (i+1));
+            bluePlayers[i].GetComponent<Unit>().SetName("Player " + (i+1));
         }
         yield return new WaitForSeconds(1f);
         playerCamera.SetActive(true);

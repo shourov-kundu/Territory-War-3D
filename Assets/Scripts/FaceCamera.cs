@@ -4,10 +4,9 @@ using UnityEngine;
 
 public class FaceCamera : MonoBehaviour
 {
-    public Camera Camera;
-
-    void Update()
+    public Camera camera;
+    void LateUpdate()
     {
-        transform.LookAt(Camera.transform, Vector3.up);
+        transform.LookAt(camera.transform, Vector3.up);
     }
 }

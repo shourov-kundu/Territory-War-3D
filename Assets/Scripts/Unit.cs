@@ -11,10 +11,12 @@ public class Unit : MonoBehaviour
     Image progressImage;
     [SerializeField]
     Canvas canvas;
+    [SerializeField]
+    Text nameLabel;
     void Start(){
         if (canvas.TryGetComponent<FaceCamera>(out FaceCamera faceCamera))
         {
-            faceCamera.Camera = Camera.main;
+            faceCamera.camera = Camera.main;
         }
     }
     public void InstantKill(){
@@ -30,5 +32,9 @@ public class Unit : MonoBehaviour
     }
     public bool isAlive(){
         return currentHP > 0;
+    }
+    public void SetName(string name){
+        gameObject.name = name;
+        nameLabel.text = name;
     }
 }
