@@ -157,8 +157,9 @@ public class BattleSystem : MonoBehaviour
     IEnumerator useWeapon(Weapon weapon){
         switch (weapon){
             case Weapon.GRENADE:
+                weaponObj = Instantiate(grenade, currentPlayer.transform.position + new Vector3(0f,2f,0f), playerCamera.transform.rotation);
                 lr.enabled = true;
-                lr.SetPositions(new Vector3[2] {currentPlayer.transform.position, currentPlayer.transform.position + lineLength*currentPlayer.transform.forward});
+                lr.SetPositions(new Vector3[2] {weaponObj.transform.position, weaponObj.transform.position + lineLength*currentPlayer.transform.forward});
                 angle = 0;
                 Vector3 f = currentPlayer.transform.forward;
                 while (true){
@@ -172,11 +173,10 @@ public class BattleSystem : MonoBehaviour
                     float x = Mathf.Cos(angle)*Vector3.Dot(currentPlayer.transform.forward, Vector3.right);
                     float y = Mathf.Sin(angle);
                     float z = Mathf.Cos(angle)*Vector3.Dot(currentPlayer.transform.forward, Vector3.forward);
-                    lr.SetPosition(1, currentPlayer.transform.position + lineLength*new Vector3(x,y,z));
+                    lr.SetPosition(1, weaponObj.transform.position + lineLength*new Vector3(x,y,z));
                     f = currentPlayer.transform.forward;
                 }
                 powerBar.style.display = DisplayStyle.Flex;
-                weaponObj = Instantiate(grenade, currentPlayer.transform.position + new Vector3(0f,2f,0f), playerCamera.transform.rotation);
                 bool increasing = true;                
                 powerBar.value = powerBar.lowValue;
                 float speed = (powerBar.highValue - powerBar.lowValue)*powerSpeed;

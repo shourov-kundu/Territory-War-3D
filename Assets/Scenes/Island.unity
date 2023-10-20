@@ -3883,19 +3883,19 @@ MonoBehaviour:
   redPlayer: {fileID: 9217498911130618520, guid: 831b8566dbf149d469895e57c8a08884, type: 3}
   bluePlayer: {fileID: 4923723235995876719, guid: 8049a9f2cbc9cd74eb7f418674ed9281, type: 3}
   redSpawns:
-  - {x: 0, y: 2, z: -11}
-  - {x: -7, y: 2, z: -11}
-  - {x: 7, y: 2, z: -11}
-  - {x: 14, y: 2, z: -11}
-  - {x: 18, y: 2, z: -11}
+  - {x: -3, y: 2, z: 7}
+  - {x: -7, y: 2, z: -6}
+  - {x: 10.6, y: 2, z: -9.8}
+  - {x: 3, y: 7, z: 8}
+  - {x: 10, y: 2, z: 2}
   - {x: 21, y: 2, z: -11}
   blueSpawns:
-  - {x: 0, y: 2, z: 120}
-  - {x: 7, y: 2, z: 120}
-  - {x: -7, y: 2, z: 120}
-  - {x: 14, y: 2, z: 120}
-  - {x: -14, y: 2, z: 120}
-  - {x: 21, y: 2, z: 120}
+  - {x: -3, y: 2, z: 115}
+  - {x: 3, y: 2, z: 102}
+  - {x: 13, y: 7, z: 111}
+  - {x: 8, y: 11, z: 118}
+  - {x: 0, y: 15, z: 110}
+  - {x: 0, y: 15, z: 100}
   weaponWheel: {fileID: 763255934}
   powerMeter: {fileID: 240444219}
   grenade: {fileID: 5681395811556615749, guid: 8f1ed420e47bfe24695e0a86e29bdbf8, type: 3}
