@@ -17,7 +17,6 @@ public class Grenade : MonoBehaviour, IRemovable
     } 
     void OnCollisionEnter(Collision collision){
         bounces += 1;
-        Debug.Log(bounces);
     }
     public void Activate(){
         StartCoroutine(Trigger());
@@ -30,7 +29,9 @@ public class Grenade : MonoBehaviour, IRemovable
         foreach (Collider collider in things){
             Rigidbody rb = collider.GetComponent<Rigidbody>();
             if (collider.gameObject.tag == "Player"){
-                collider.transform.parent.gameObject.GetComponent<Rigidbody>().AddExplosionForce(force, transform.position, radius);
+                GameObject p = collider.transform.parent.gameObject;
+                p.GetComponent<Unit>().takeDamage(50-50/radius*Vector3.Distance(transform.position, p.transform.position));
+                p.GetComponent<Rigidbody>().AddExplosionForce(force, transform.position, radius);
             }
         }
         removed = true;

@@ -47,7 +47,7 @@ public class BattleSystem : MonoBehaviour
     float lineLength = 1.7f;
     float powerSpeed = .5f;
     float minPower = 5f;
-    float maxPower = 35f;
+    float maxPower = 30f;
     ProgressBar powerBar;
     void Start(){
         state = BattleState.START;
