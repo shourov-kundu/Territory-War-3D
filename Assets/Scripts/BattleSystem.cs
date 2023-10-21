@@ -25,6 +25,7 @@ public class BattleSystem : MonoBehaviour
     public Vector3[] blueSpawns;
     public GameObject weaponWheel;
     public GameObject powerMeter;
+    public GameObject distanceMeter;
     [Header("Weapons")]
     public GameObject grenade;
     BattleState state;
@@ -33,7 +34,8 @@ public class BattleSystem : MonoBehaviour
     GameObject weaponObj;
     GameObject[] redPlayers;
     GameObject[] bluePlayers;
-    GameObject currentPlayer;
+    public GameObject currentPlayer;
+    public Vector3 startingPoint;
     int r;
     int b;
     KeyCode pressedKey;
@@ -49,6 +51,7 @@ public class BattleSystem : MonoBehaviour
     float minPower = 5f;
     float maxPower = 30f;
     ProgressBar powerBar;
+    ProgressBar distanceBar;
     void Start(){
         state = BattleState.START;
         currentPlayer = null;
@@ -63,8 +66,11 @@ public class BattleSystem : MonoBehaviour
         angle = 0f;
         weaponWheel.GetComponent<UIDocument>().rootVisualElement.style.display = DisplayStyle.None;
         powerMeter.GetComponent<UIDocument>().rootVisualElement.style.display = DisplayStyle.Flex;
+        distanceMeter.GetComponent<UIDocument>().rootVisualElement.style.display = DisplayStyle.Flex;
         powerBar = (ProgressBar)powerMeter.GetComponent<UIDocument>().rootVisualElement.Q("PowerMeter");
+        distanceBar = (ProgressBar)distanceMeter.GetComponent<UIDocument>().rootVisualElement.Q("DistanceMeter");
         powerBar.style.display = DisplayStyle.None;
+        distanceBar.style.display = DisplayStyle.None;
         StartCoroutine(SetupBattle());
     }
     void Update(){
@@ -123,10 +129,12 @@ public class BattleSystem : MonoBehaviour
     IEnumerator takeTurn(GameObject player){
         weaponFired = false;
         currentPlayer = player;
+        // distanceBar.value = 0;
         LoadCameraToPlayer(currentPlayer);
         yield return new WaitForSeconds(1f);
-        Vector3 startingPoint = currentPlayer.transform.position;
+        startingPoint = currentPlayer.transform.position;
         currentPlayer.GetComponent<PlayerMovement>().enabled = true;
+        distanceBar.style.display = DisplayStyle.Flex;
         BattleState currentState = state;
         while (state == currentState){
             yield return new WaitUntil(keyPress);
@@ -146,6 +154,7 @@ public class BattleSystem : MonoBehaviour
                     bool active = weaponWheel.GetComponent<UIDocument>().rootVisualElement.style.display == DisplayStyle.Flex;
                     updateWeaponState(!active); // turn on/off weapon UI
                     currentPlayer.GetComponent<PlayerMovement>().enabled = active; // player movement
+                    distanceBar.style.display = active ? DisplayStyle.Flex : DisplayStyle.None;
                 }
             }
         }
@@ -197,7 +206,7 @@ public class BattleSystem : MonoBehaviour
                 lr.enabled = false;
                 weaponObj.GetComponent<Rigidbody>().isKinematic = false;
                 Vector3 throwDirection = (lr.GetPosition(1) - lr.GetPosition(0)).normalized;
-                float power = minPower + (maxPower - minPower)*powerBar.value/powerBar.highValue;
+                float power = Mathf.Lerp(minPower, maxPower, powerBar.value/powerBar.highValue);
                 weaponObj.GetComponent<Rigidbody>().AddForce(throwDirection * power, ForceMode.VelocityChange);
                 weaponObj.GetComponent<Grenade>().Activate();
                 powerBar.style.display = DisplayStyle.None;
@@ -252,6 +261,7 @@ public class BattleSystem : MonoBehaviour
         Debug.Log("Draw...");
     }
     void LoadCameraToPlayer(GameObject player){
+        distanceBar.value = 0;
         tpc.orientation = player.transform.Find("Orientation");
         tpc.player = player.transform;
         tpc.playerObj = player.transform.Find("Player Body");

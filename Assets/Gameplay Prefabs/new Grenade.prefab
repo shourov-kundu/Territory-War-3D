@@ -154,7 +154,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 76fa50113d7298a46906cf5933244bdb, type: 3}
       propertyPath: m_Name
-      value: M67 old Variant 1
+      value: new Grenade
       objectReference: {fileID: 0}
     - target: {fileID: 7924981181113692362, guid: 76fa50113d7298a46906cf5933244bdb, type: 3}
       propertyPath: m_Enabled
@@ -240,5 +240,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   force: 550
-  radius: 6
+  radius: 7
   explosionEffect: {fileID: 1732061150197337346, guid: db91fc5e472c5064dba6dfcaf1b57fdb, type: 3}

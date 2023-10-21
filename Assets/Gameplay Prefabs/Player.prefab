@@ -271,7 +271,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4523415105439599411}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 12f328129124f28499f11962448a1883, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -614,7 +614,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b909dccc26043641adbbde6b407cbaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Camera: {fileID: 0}
+  camera: {fileID: 0}
 --- !u!1 &7885123034769907444
 GameObject:
   m_ObjectHideFlags: 0
