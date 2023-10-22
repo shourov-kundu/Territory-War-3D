@@ -1,5 +1,5 @@
 # Territory-War-3D
-A 3D remake of the 2006 flash game [Territory War](https://youtu.be/nGI3yRdBcVY?t=350) by Afro Ninja.
+A 3D remake of the 2006 flash game [Territory War](https://youtu.be/nGI3yRdBcVY?t=427) by Afro Ninja.
 
 Fight for control of your territory in this turn-based tactical platformer!
 
